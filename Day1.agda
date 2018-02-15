@@ -12,6 +12,10 @@ module Day1 where
     true  : Bool
     false : Bool
 
+  data List {α} (A : Set α) : Set α where
+    [] : List A
+    _::_ : (a : A) → List A → List A
+
   _<_ : Nat → Nat → Bool
   zero < zero = false
   zero < succ b = true
@@ -22,6 +26,8 @@ module Day1 where
   zero + b = b
   succ a + b = succ (a + b)
 
+  infix 0 if_then_else_
+
   if_then_else_ : ∀ {a} {A : Set a} → Bool → A → A → A
   if true then y else z = y
   if false then y else z = z
@@ -30,19 +36,21 @@ module Day1 where
     nat : Type
     bool : Type
 
-  data Expr : Type → Set where
-    lit : (n : Nat) → Expr nat
-    true : Expr bool
-    false : Expr bool
-    less : (a b : Expr nat) → Expr bool
-    plus : (a b : Expr nat) → Expr nat
-    if   : ∀ {t} → (a : Expr bool) (b c : Expr t) → Expr t
+  Cxt = List Type
+
+  data Expr (Γ : Cxt) : Type → Set where
+    lit : (n : Nat) → Expr Γ nat
+    true : Expr Γ bool
+    false : Expr Γ bool
+    less : (a b : Expr Γ nat) → Expr Γ bool
+    plus : (a b : Expr Γ nat) → Expr Γ nat
+    if   : ∀ {t} → (a : Expr Γ bool) (b c : Expr Γ t) → Expr Γ t
 
   Value : Type → Set
   Value nat = Nat
   Value bool = Bool
 
-  eval : ∀ {t} → Expr t → Value t
+  eval : ∀ {Γ t} → Expr Γ t → Value t
   eval (lit n) = n
   eval true = true
   eval false = false
