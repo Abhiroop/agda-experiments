@@ -18,6 +18,14 @@ module Day1 where
   succ a < zero = false
   succ a < succ b = a < b
 
+  _+_ : Nat → Nat → Nat
+  zero + b = b
+  succ a + b = succ (a + b)
+
+  if_then_else_ : ∀ {a} {A : Set a} → Bool → A → A → A
+  if true then y else z = y
+  if false then y else z = z
+
   data Type : Set where
     nat : Type
     bool : Type
@@ -39,5 +47,5 @@ module Day1 where
   eval true = true
   eval false = false
   eval (less e e₁) = eval e < eval e₁
-  eval (plus e e₁) = {!!}
-  eval (if e e₁ e₂) = {!!}
+  eval (plus e e₁) = eval e + eval e₁
+  eval (if e e₁ e₂) = if eval e then eval e₁ else eval e₂
